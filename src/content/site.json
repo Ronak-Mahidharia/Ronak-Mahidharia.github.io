@@ -1,0 +1,93 @@
+{
+  "name": "Ronak Mahidharia",
+  "role": "Software Engineer · AI Engineer",
+  "intro": "I'm a software engineer who gets AI features into production.",
+  "summary": "Most of my work sits where large language models meet real products: retrieval-augmented generation (RAG), evaluation that shows whether a model is right, and the serverless AWS backends and React front ends around them.",
+  "location": "United States",
+  "email": "ronakmahidharia3@gmail.com",
+  "links": {
+    "linkedin": "https://www.linkedin.com/in/ronakmahidharia",
+    "github": "https://github.com/Ronak-Mahidharia"
+  },
+  "about": [
+    "I started my career in Mumbai, building React front ends, Node.js APIs, and Adobe Experience Manager components for education websites. Then I moved to Boston for a Master's in Information Systems at Northeastern University.",
+    "What I care about: AI whose accuracy is measured rather than assumed, backends that fail loudly and recover cleanly, and interfaces people can use without a manual."
+  ],
+  "experience": [
+    {
+      "role": "Software Engineer",
+      "company": "TermScout",
+      "companyNote": "AI contract-intelligence platform",
+      "dates": "May 2026 – Present",
+      "location": "Remote",
+      "bullets": [
+        "Built a no-login contract analysis funnel in React and Python on AWS Lambda. It runs the core AI pipeline in its own isolated AWS account, returns results that match the main product field for field in about 3 to 4 minutes, and keeps the cost per analysis low.",
+        "Diagnosed a broken contract signal and led the correction across 6 agreement types (about 2,650 clause positions). I wrote a transactional loader with automatic backups, dry-run diffs, and one-step rollback, so every change could be checked before it went live and undone in one step.",
+        "Shipped the API behind every Benchmark Report on AWS Lambda, API Gateway, and Aurora PostgreSQL, and brought Signals analytics into a single React view.",
+        "Added precision/recall (F1) scoring for multi-select AI answers to our evaluation tooling and validated it in production. It gives the team a much truer read on those answers than the old metric did.",
+        "Added a manual approval step to the GitHub Actions CI/CD workflows so deploys wait for review, and fixed a scoring bug in the AI prediction pipeline."
+      ],
+      "stack": ["Python", "React", "AWS Lambda", "API Gateway", "Step Functions", "Aurora PostgreSQL", "OpenAI", "GitHub Actions"]
+    },
+    {
+      "role": "AI Engineer",
+      "company": "EDISCOVERIST",
+      "dates": "Jan 2025 – Aug 2025",
+      "location": "Alamo, CA · Remote",
+      "bullets": [
+        "Saved reviewers 3 to 4 hours per document with an AI-powered Microsoft Word add-in (React, TypeScript, Office.js) that checks provisions, detects the jurisdiction, and scores risk in ESI protocols and protective orders.",
+        "Raised AI accuracy by 30% by grounding LLM output in jurisdiction rules, court templates, and domain-specific clauses through retrieval-augmented generation (RAG) on Azure Cognitive Search, now called Azure AI Search.",
+        "Built the Node.js/Express REST APIs behind the add-in, connecting Azure OpenAI and RAG to flaw analysis, clause checks, and summaries, and deployed the backend on Azure App Service.",
+        "Freed up 5 hours a week of manual QA with scheduled AWS Lambda jobs that email weekly AI-quality summaries, and made labeling 18% more consistent with repetition tracking and prompt-accuracy monitoring.",
+        "Cut release and onboarding time by 60% by containerizing the Node.js and Python services with Docker and scripting environment setup."
+      ],
+      "stack": ["React", "TypeScript", "Office.js", "Node.js", "Azure OpenAI", "RAG", "Azure AI Search", "Docker"]
+    },
+    {
+      "role": "Software Engineer",
+      "company": "Innovative Data Solutions",
+      "dates": "May 2022 – Apr 2023",
+      "location": "Mumbai, India",
+      "bullets": [
+        "Led a team of 5 to 6 developers building a virtual education platform with authentication, dashboards, and progress tracking in React, Node.js, and MongoDB.",
+        "Created reusable, responsive React and Sass layouts for course pages, dashboards, and announcements on client education platforms.",
+        "Connected the UI to an internal CMS through Node.js/Express APIs for authentication, content retrieval, and form submissions.",
+        "Took routine publishing off developers' plates by building custom Adobe Experience Manager (AEM) components and templates, so content teams could publish course details, banners, and updates on their own."
+      ],
+      "stack": ["React", "Sass", "Node.js", "Express", "MongoDB", "Adobe Experience Manager"]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Business Dashboard",
+      "dates": "Jun 2024",
+      "description": "A responsive admin dashboard built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui. It has charts built with Recharts, data tables built with TanStack Table, and separate pages for users, orders, and settings.",
+      "tags": ["Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "Recharts", "TanStack Table"],
+      "links": [
+        { "label": "Live demo", "href": "https://dashboard-project-opal-psi.vercel.app" },
+        { "label": "Code", "href": "https://github.com/Ronak-Mahidharia/Dashboard-Project" }
+      ]
+    }
+  ],
+  "skills": [
+    { "group": "Languages", "items": ["Python", "TypeScript", "JavaScript", "SQL", "Java", "HTML/CSS"] },
+    { "group": "AI & LLM", "items": ["OpenAI API", "Azure OpenAI", "RAG", "Azure AI Search", "Prompt engineering", "LLM evaluation"] },
+    { "group": "Frontend", "items": ["React", "Redux Toolkit", "RTK Query", "Vite", "Tailwind CSS", "Office.js", "Recharts"] },
+    { "group": "Backend & data", "items": ["Node.js", "Express", "Flask", "REST APIs", "PostgreSQL (Amazon Aurora)", "MongoDB", "Redis", "Celery"] },
+    { "group": "Cloud & DevOps", "items": ["AWS (Lambda, Step Functions, API Gateway, S3, Cognito, SAM)", "Docker", "GitHub Actions", "Git"] }
+  ],
+  "education": [
+    {
+      "school": "Northeastern University",
+      "degree": "Master of Science in Information Systems",
+      "dates": "Sep 2023 – Dec 2025",
+      "location": "Boston, MA"
+    },
+    {
+      "school": "Narsee Monjee College of Commerce and Economics",
+      "degree": "Bachelor of Science in Information Technology",
+      "dates": "Sep 2019 – May 2022",
+      "location": "Mumbai, India"
+    }
+  ]
+}
