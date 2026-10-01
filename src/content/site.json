@@ -64,8 +64,7 @@
       "description": "A responsive admin dashboard built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui. It has charts built with Recharts, data tables built with TanStack Table, and separate pages for users, orders, and settings.",
       "tags": ["Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "Recharts", "TanStack Table"],
       "links": [
-        { "label": "Live demo", "href": "https://dashboard-project-opal-psi.vercel.app" },
-        { "label": "Code", "href": "https://github.com/Ronak-Mahidharia/Dashboard-Project" }
+        { "label": "Live demo", "href": "https://dashboard-project-opal-psi.vercel.app" }
       ]
     }
   ],
