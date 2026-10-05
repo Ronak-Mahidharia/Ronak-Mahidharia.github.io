@@ -59,6 +59,16 @@
   ],
   "projects": [
     {
+      "name": "Car Safety Checker",
+      "dates": "Oct 2026",
+      "description": "Describe a car problem in plain English and see the official NHTSA recalls and owner complaints that match it. It finds 84.6% of the right recalls on 1,000 held-out complaints (a keyword baseline finds 78.1%), runs its 1 MB model entirely in the browser, and gives AI assistants the same lookups through an MCP server.",
+      "tags": ["Python", "TypeScript", "React", "RAG", "MCP", "LLM evaluation"],
+      "links": [
+        { "label": "Live site", "href": "https://ronak-mahidharia.github.io/car-safety-checker/" },
+        { "label": "Code", "href": "https://github.com/Ronak-Mahidharia/car-safety-checker" }
+      ]
+    },
+    {
       "name": "Business Dashboard",
       "dates": "Jun 2024",
       "description": "A responsive admin dashboard built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui. It has charts built with Recharts, data tables built with TanStack Table, and separate pages for users, orders, and settings.",
