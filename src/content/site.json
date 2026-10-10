@@ -69,6 +69,15 @@
       ]
     },
     {
+      "name": "Control Finder",
+      "dates": "Oct 2026",
+      "description": "Ask a security question in plain English and get the NIST SP 800-53 controls that answer it, each one cited. Measured on NIST's own CSF 2.0 mappings, its hybrid search over pgvector puts a right control first for 32.6% of held-out questions (keyword search: 17.4%), its local model says \"not covered\" for 19 of 20 out-of-scope questions, and an MCP server gives AI assistants the same search.",
+      "tags": ["Python", "FastAPI", "PostgreSQL", "pgvector", "RAG", "MCP"],
+      "links": [
+        { "label": "Code", "href": "https://github.com/Ronak-Mahidharia/control-finder" }
+      ]
+    },
+    {
       "name": "Business Dashboard",
       "dates": "Jun 2024",
       "description": "A responsive admin dashboard built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui. It has charts built with Recharts, data tables built with TanStack Table, and separate pages for users, orders, and settings.",
