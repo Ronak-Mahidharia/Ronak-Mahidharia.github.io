@@ -78,6 +78,15 @@
       ]
     },
     {
+      "name": "docs-proof",
+      "dates": "Oct 2026",
+      "description": "Finds the lines in your docs that a code change made wrong, and proves each one, with a suggested fix that changes nothing until you approve it. Measured on 246 changes planted in 30 real Python projects: on the held-out half, 98.0% of the doc lines it flagged for a renamed option, function, environment variable, or file were right, and running the projects' documented commands in a locked-down Docker sandbox found 7 real out-of-date doc lines in 5 of them. It works as a command, a GitHub Action, and an MCP server for AI assistants.",
+      "tags": ["Python", "CLI", "GitHub Actions", "MCP", "Docker", "Evaluation"],
+      "links": [
+        { "label": "Code", "href": "https://github.com/Ronak-Mahidharia/docs-proof" }
+      ]
+    },
+    {
       "name": "Business Dashboard",
       "dates": "Jun 2024",
       "description": "A responsive admin dashboard built with Next.js, TypeScript, Tailwind CSS, and shadcn/ui. It has charts built with Recharts, data tables built with TanStack Table, and separate pages for users, orders, and settings.",
