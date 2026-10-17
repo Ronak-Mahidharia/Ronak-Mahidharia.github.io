@@ -2,14 +2,17 @@ import site from "@/content/site.json";
 import { Section } from "@/components/Section";
 import { ExternalLink } from "@/components/ExternalLink";
 import { Tags } from "@/components/Tags";
+import { SiteHeader, type NavItem } from "@/components/SiteHeader";
+import { ArrowUp, ArrowUpRight, Mail, MapPin } from "@/components/Icons";
 
-// On phones only Contact fits next to the name; the full menu shows from the `sm` breakpoint up.
-const nav = [
-  { href: "#about", label: "About", phone: false },
-  { href: "#experience", label: "Experience", phone: false },
-  { href: "#projects", label: "Projects", phone: false },
-  { href: "#skills", label: "Skills", phone: false },
-  { href: "#contact", label: "Contact", phone: true },
+// The top bar links to every section, in page order (on phones, through its menu).
+const sections: NavItem[] = [
+  { id: "about", label: "About" },
+  { id: "experience", label: "Experience" },
+  { id: "projects", label: "Projects" },
+  { id: "skills", label: "Skills" },
+  { id: "education", label: "Education" },
+  { id: "contact", label: "Contact" },
 ];
 
 const contactLinks = [
@@ -18,10 +21,41 @@ const contactLinks = [
   { label: "GitHub", href: site.links.github, text: "github.com/Ronak-Mahidharia" },
 ];
 
+const primaryButton =
+  "inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground shadow-sm transition-opacity hover:opacity-90";
+const secondaryButton =
+  "inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-medium transition-colors hover:border-accent hover:text-accent";
+const card = "rounded-2xl border border-border bg-card";
 const linkStyle =
   "underline decoration-border underline-offset-4 transition-colors hover:text-accent hover:decoration-accent";
 
+function ContactButtons() {
+  return (
+    <>
+      <a href={`mailto:${site.email}`} className={primaryButton}>
+        <Mail />
+        Email me
+      </a>
+      <ExternalLink href={site.links.linkedin} className={secondaryButton}>
+        LinkedIn
+        <ArrowUpRight className="h-3.5 w-3.5" />
+        <span className="sr-only"> (opens in a new tab)</span>
+      </ExternalLink>
+      <ExternalLink href={site.links.github} className={secondaryButton}>
+        GitHub
+        <ArrowUpRight className="h-3.5 w-3.5" />
+        <span className="sr-only"> (opens in a new tab)</span>
+      </ExternalLink>
+    </>
+  );
+}
+
 export default function Home() {
+  const [currentJob] = site.experience;
+  const [degree] = site.education;
+  // The newest projects, for the summary card; the full list is in Projects.
+  const recentProjects = site.projects.filter((project) => project.dates === site.projects[0].dates);
+
   return (
     <>
       <a
@@ -31,57 +65,54 @@ export default function Home() {
         Skip to content
       </a>
 
-      <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-5 py-3 sm:px-6">
-          <a href="#top" className="shrink-0 font-semibold tracking-tight">
-            {site.name}
-          </a>
-          <nav aria-label="Sections" className="-mr-2">
-            <ul className="flex gap-1 text-sm text-muted">
-              {nav.map((item) => (
-                <li key={item.href} className={item.phone ? "" : "hidden sm:block"}>
-                  <a href={item.href} className="block rounded-md px-2 py-1 transition-colors hover:text-foreground">
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader name={site.name} items={sections} />
 
-      <main id="main" className="mx-auto w-full max-w-3xl px-5 sm:px-6">
+      <main id="main">
         {/* Intro */}
-        <section id="top" aria-label="Introduction" className="scroll-mt-20 py-16 sm:py-24">
-          <p className="text-sm font-medium text-accent">{site.role}</p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{site.name}</h1>
-          <p className="mt-6 text-xl leading-relaxed">{site.intro}</p>
-          <p className="mt-4 max-w-2xl leading-relaxed text-muted">{site.summary}</p>
-          <p className="mt-4 text-sm text-muted">{site.location}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a
-              href={`mailto:${site.email}`}
-              className="rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
-            >
-              Email me
-            </a>
-            <ExternalLink
-              href={site.links.linkedin}
-              className="rounded-md border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
-            >
-              LinkedIn
-            </ExternalLink>
-            <ExternalLink
-              href={site.links.github}
-              className="rounded-md border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
-            >
-              GitHub
-            </ExternalLink>
+        <section id="top" aria-label="Introduction" className="relative isolate overflow-hidden">
+          <div aria-hidden="true" className="hero-glow absolute inset-0 -z-10" />
+          <div className="mx-auto grid max-w-5xl gap-12 px-5 py-16 sm:px-6 sm:py-24 md:grid-cols-[minmax(0,1fr)_17rem] md:items-center lg:grid-cols-[minmax(0,1fr)_19rem]">
+            <div>
+              <p className="inline-flex rounded-full border border-border bg-background px-3 py-1 text-sm font-medium text-accent">
+                {site.role}
+              </p>
+              <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">{site.name}</h1>
+              <p className="mt-6 text-xl leading-relaxed sm:text-2xl">{site.intro}</p>
+              <p className="mt-4 max-w-2xl leading-relaxed text-muted">{site.summary}</p>
+              <p className="mt-5 flex items-center gap-2 text-sm text-muted">
+                <MapPin />
+                {site.location}
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <ContactButtons />
+              </div>
+            </div>
+
+            <aside aria-label="At a glance" className={`${card} p-6 shadow-sm`}>
+              <p className="text-sm font-semibold">At a glance</p>
+              <dl className="mt-4 space-y-4 text-sm">
+                <div>
+                  <dt className="text-muted">Current role</dt>
+                  <dd className="mt-1 font-medium">
+                    {currentJob.role} · {currentJob.company}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-muted">Education</dt>
+                  <dd className="mt-1 font-medium">{degree.degree}</dd>
+                  <dd className="text-muted">{degree.school}</dd>
+                </div>
+                <div>
+                  <dt className="text-muted">Recent projects</dt>
+                  <dd className="mt-1 font-medium">{recentProjects.map((project) => project.name).join(", ")}</dd>
+                </div>
+              </dl>
+            </aside>
           </div>
         </section>
 
-        <Section id="about" title="About">
-          <div className="space-y-4 leading-relaxed">
+        <Section id="about" title="About" tone="muted">
+          <div className="max-w-3xl space-y-4 text-lg leading-relaxed">
             {site.about.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
@@ -89,14 +120,18 @@ export default function Home() {
         </Section>
 
         <Section id="experience" title="Experience">
-          <ol className="space-y-12">
+          <ol className="max-w-4xl space-y-12 border-l border-border pl-6 sm:pl-8">
             {site.experience.map((job) => (
-              <li key={`${job.company}-${job.dates}`}>
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+              <li key={`${job.company}-${job.dates}`} className="relative">
+                <span
+                  aria-hidden="true"
+                  className="absolute top-2 -left-[30px] h-2.5 w-2.5 rounded-full bg-accent ring-4 ring-background sm:-left-[38px]"
+                />
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
                   <h3 className="text-lg font-semibold">
-                    {job.role} · {job.company}
+                    {job.role} <span className="font-normal text-muted">·</span> {job.company}
                   </h3>
-                  <p className="shrink-0 text-sm text-muted">{job.dates}</p>
+                  <p className="shrink-0 text-sm font-medium text-muted">{job.dates}</p>
                 </div>
                 <p className="mt-1 text-sm text-muted">
                   {"companyNote" in job && job.companyNote ? `${job.companyNote} · ` : ""}
@@ -113,20 +148,28 @@ export default function Home() {
           </ol>
         </Section>
 
-        <Section id="projects" title="Projects">
-          <ul className="grid gap-6">
+        <Section id="projects" title="Projects" tone="muted">
+          <ul className="grid gap-6 md:grid-cols-2">
             {site.projects.map((project) => (
-              <li key={project.name} className="rounded-xl border border-border bg-card p-6">
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+              <li
+                key={project.name}
+                className={`${card} flex flex-col p-6 shadow-sm transition-shadow hover:shadow-md`}
+              >
+                <div className="flex items-baseline justify-between gap-4">
                   <h3 className="text-lg font-semibold">{project.name}</h3>
                   <p className="shrink-0 text-sm text-muted">{project.dates}</p>
                 </div>
                 <p className="mt-3 leading-relaxed">{project.description}</p>
                 <Tags items={project.tags} label={`Technologies used in ${project.name}`} />
-                <p className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-medium">
+                <p className="mt-auto flex flex-wrap gap-3 pt-6">
                   {project.links.map((link) => (
-                    <ExternalLink key={link.href} href={link.href} className={linkStyle}>
+                    <ExternalLink
+                      key={link.href}
+                      href={link.href}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-sm font-medium transition-colors hover:border-accent hover:text-accent"
+                    >
                       {link.label}
+                      <ArrowUpRight className="h-3.5 w-3.5" />
                       <span className="sr-only"> for {project.name} (opens in a new tab)</span>
                     </ExternalLink>
                   ))}
@@ -137,26 +180,26 @@ export default function Home() {
         </Section>
 
         <Section id="skills" title="Skills">
-          <dl className="space-y-4">
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {site.skills.map((skill) => (
-              <div key={skill.group} className="grid gap-1 sm:grid-cols-[10rem_1fr] sm:gap-4">
-                <dt className="font-medium">{skill.group}</dt>
-                <dd className="leading-relaxed text-muted">{skill.items.join(" · ")}</dd>
-              </div>
+              <li key={skill.group} className={`${card} p-5`}>
+                <h3 className="font-semibold">{skill.group}</h3>
+                <Tags items={skill.items} label={`${skill.group} skills`} className="mt-3" />
+              </li>
             ))}
-          </dl>
+          </ul>
         </Section>
 
-        <Section id="education" title="Education">
-          <ul className="space-y-6">
+        <Section id="education" title="Education" tone="muted">
+          <ul className="grid gap-4 md:grid-cols-2">
             {site.education.map((school) => (
-              <li key={school.school}>
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                  <h3 className="font-semibold">{school.school}</h3>
-                  <p className="shrink-0 text-sm text-muted">{school.dates}</p>
-                </div>
-                <p className="mt-1 text-muted">
-                  {school.degree} · {school.location}
+              <li key={school.school} className={`${card} p-6`}>
+                <p className="text-sm font-medium text-muted">{school.dates}</p>
+                <h3 className="mt-1 text-lg font-semibold">{school.school}</h3>
+                <p className="mt-2 leading-relaxed">{school.degree}</p>
+                <p className="mt-2 flex items-center gap-1.5 text-sm text-muted">
+                  <MapPin className="h-3.5 w-3.5" />
+                  {school.location}
                 </p>
               </li>
             ))}
@@ -164,23 +207,36 @@ export default function Home() {
         </Section>
 
         <Section id="contact" title="Contact">
-          <p className="leading-relaxed">The quickest way to reach me is email or LinkedIn.</p>
-          <ul className="mt-4 space-y-2">
-            {contactLinks.map((link) => (
-              <li key={link.label} className="flex gap-3">
-                <span className="w-20 shrink-0 text-muted">{link.label}</span>
-                <ExternalLink href={link.href} className={linkStyle}>
-                  {link.text}
-                </ExternalLink>
-              </li>
-            ))}
-          </ul>
+          <div className={`${card} p-6 shadow-sm sm:p-8 md:flex md:items-center md:justify-between md:gap-10`}>
+            <div>
+              <p className="text-lg leading-relaxed">The quickest way to reach me is email or LinkedIn.</p>
+              <ul className="mt-5 space-y-2 text-sm">
+                {contactLinks.map((link) => (
+                  <li key={link.label} className="flex flex-col gap-0.5 sm:flex-row sm:gap-3">
+                    <span className="shrink-0 text-muted sm:w-20">{link.label}</span>
+                    <ExternalLink href={link.href} className={`${linkStyle} wrap-anywhere`}>
+                      {link.text}
+                    </ExternalLink>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-3 md:mt-0 md:shrink-0">
+              <ContactButtons />
+            </div>
+          </div>
         </Section>
       </main>
 
       <footer className="border-t border-border">
-        <div className="mx-auto max-w-3xl px-5 py-8 text-sm text-muted sm:px-6">
-          © {new Date().getFullYear()} {site.name}. Built with Next.js and Tailwind CSS.
+        <div className="mx-auto flex max-w-5xl flex-col gap-3 px-5 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <p>
+            © {new Date().getFullYear()} {site.name}. Built with Next.js and Tailwind CSS.
+          </p>
+          <a href="#top" className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground">
+            Back to top
+            <ArrowUp className="h-3.5 w-3.5" />
+          </a>
         </div>
       </footer>
     </>
