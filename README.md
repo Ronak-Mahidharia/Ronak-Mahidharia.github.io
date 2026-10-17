@@ -22,12 +22,12 @@ To add a project, add an entry to `projects` in `site.json`:
 ```
 
 ## Themes
-Visitors can pick a theme from the button in the top bar: Default (blue), Summer, Autumn, Winter, or Rain. Each one has a light and a dark version, and the visitor's device setting picks between them.
+Visitors can pick a theme and a mode from the button in the top bar. The themes are Default (blue), Summer, Autumn, Winter, and Rain. Each one has a light and a dark version: the visitor chooses Light or Dark, or Auto (the default), which follows the device's setting, even if it changes while the page is open.
 
 - The palettes are in `src/app/globals.css`. Every text color passes WCAG AA (4.5:1) on every background in all ten, including the glow behind the intro.
-- The list of themes is in `src/components/themes.ts`, and the seasonal touches behind the intro (a sun, falling leaves, snow, rain) are in `src/components/SeasonEffects.tsx`.
-- A choice is remembered in that visitor's browser (`localStorage`), and a small script in `src/app/layout.tsx` applies it before the first paint, so a returning visitor never sees the default colors first.
-- Changing themes fades the colors over about 0.6 seconds. Visitors who ask their device for less motion get no fades and no effects.
+- The list of themes and modes is in `src/components/themes.ts`, and the seasonal touches behind the intro (a sun, falling leaves, snow, rain) are in `src/components/SeasonEffects.tsx`.
+- Both choices are remembered in that visitor's browser (`localStorage`), and a small script in `src/app/layout.tsx` applies them before the first paint, so a returning visitor never sees the wrong colors first. Without JavaScript, the default theme follows the device.
+- Changing theme or mode fades the colors over about 0.6 seconds. Visitors who ask their device for less motion get no fades and no effects.
 
 ## Run it locally
 You need Node.js 20.9 or newer.

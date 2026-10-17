@@ -1,8 +1,18 @@
 "use client";
 
-import { useSyncExternalStore, type ComponentType, type Ref } from "react";
+import { useEffect, useSyncExternalStore, type ComponentType, type Ref } from "react";
 import { CloudRainIcon, ContrastIcon, LeafIcon, SnowflakeIcon, SunIcon } from "@/components/Icons";
-import { STORAGE_KEY, THEME_EVENT, THEMES, isSeason, type ThemeId } from "@/components/themes";
+import {
+  MODE_KEY,
+  MODES,
+  STORAGE_KEY,
+  THEME_EVENT,
+  THEMES,
+  isFixedMode,
+  isSeason,
+  type ModeId,
+  type ThemeId,
+} from "@/components/themes";
 
 const ICONS: Record<ThemeId, ComponentType<{ className?: string }>> = {
   default: ContrastIcon,
@@ -12,47 +22,72 @@ const ICONS: Record<ThemeId, ComponentType<{ className?: string }>> = {
   rain: CloudRainIcon,
 };
 
-// The theme lives on <html data-theme>, set before the first paint by the script in layout.tsx; React reads it from
-// there, so the picker always agrees with what's on screen.
+const DARK_DEVICE = "(prefers-color-scheme: dark)";
+
+// The theme and the mode live on <html data-theme> and <html data-mode>, set before the first paint by the script in
+// layout.tsx; React reads them from there (and the mode choice from storage), so the picker always agrees with
+// what's on screen.
 function readTheme(): ThemeId {
   const value = document.documentElement.getAttribute("data-theme");
   return isSeason(value) ? value : "default";
 }
 
+function readModeChoice(): ModeId {
+  try {
+    const value = localStorage.getItem(MODE_KEY);
+    return isFixedMode(value) ? value : "auto";
+  } catch {
+    return "auto";
+  }
+}
+
+function readShownMode(): "light" | "dark" {
+  return document.documentElement.getAttribute("data-mode") === "dark" ? "dark" : "light";
+}
+
 let fadeTimer = 0;
 
-// Switches the theme with a short fade (none for visitors who ask for less motion) and remembers it in this browser.
-export function applyTheme(theme: ThemeId, remember = true) {
+// Every color fades to the new theme or mode (no fade for visitors who ask for less motion).
+function fade() {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   const root = document.documentElement;
-  if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    root.classList.add("theme-changing");
-    window.clearTimeout(fadeTimer);
-    fadeTimer = window.setTimeout(() => root.classList.remove("theme-changing"), 800);
+  root.classList.add("theme-changing");
+  window.clearTimeout(fadeTimer);
+  fadeTimer = window.setTimeout(() => root.classList.remove("theme-changing"), 800);
+}
+
+function remember(key: string, value: string | null) {
+  try {
+    if (value === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, value);
+  } catch {
+    // Storage can be blocked (a private window); the choice still applies for this visit.
   }
+}
+
+// Switches the theme and remembers it in this browser.
+export function applyTheme(theme: ThemeId, save = true) {
+  fade();
+  const root = document.documentElement;
   if (theme === "default") root.removeAttribute("data-theme");
   else root.setAttribute("data-theme", theme);
-  if (remember) {
-    try {
-      if (theme === "default") localStorage.removeItem(STORAGE_KEY);
-      else localStorage.setItem(STORAGE_KEY, theme);
-    } catch {
-      // Storage can be blocked (a private window); the theme still applies for this visit.
-    }
-  }
+  if (save) remember(STORAGE_KEY, theme === "default" ? null : theme);
   window.dispatchEvent(new Event(THEME_EVENT));
 }
 
+// Switches to Light, Dark, or Auto (the device's setting) and remembers it in this browser.
+export function applyMode(mode: ModeId, save = true) {
+  const shown = mode === "auto" ? (window.matchMedia(DARK_DEVICE).matches ? "dark" : "light") : mode;
+  if (shown !== readShownMode()) fade();
+  document.documentElement.setAttribute("data-mode", shown);
+  if (save) remember(MODE_KEY, mode === "auto" ? null : mode);
+  window.dispatchEvent(new Event(THEME_EVENT));
+}
+
+// React re-reads the theme and mode whenever either changes.
 function subscribe(onChange: () => void) {
-  // A choice made in another tab of this site shows up here too.
-  const onStorage = (event: StorageEvent) => {
-    if (event.key === STORAGE_KEY) applyTheme(isSeason(event.newValue) ? event.newValue : "default", false);
-  };
   window.addEventListener(THEME_EVENT, onChange);
-  window.addEventListener("storage", onStorage);
-  return () => {
-    window.removeEventListener(THEME_EVENT, onChange);
-    window.removeEventListener("storage", onStorage);
-  };
+  return () => window.removeEventListener(THEME_EVENT, onChange);
 }
 
 type ThemePickerProps = {
@@ -61,11 +96,33 @@ type ThemePickerProps = {
   buttonRef: Ref<HTMLButtonElement>;
 };
 
-// A button in the top bar that opens a panel with every theme. Choosing one applies it at once (with a fade), so a
-// visitor can try them in turn; the panel closes with Escape or a tap outside, like the phone menu.
+// A button in the top bar that opens a panel with every theme, and Light, Dark, or Auto. A choice applies at once
+// (with a fade), so a visitor can try them in turn; the panel closes with Escape or a tap outside, like the phone menu.
 export function ThemePicker({ open, onToggle, buttonRef }: ThemePickerProps) {
   const theme = useSyncExternalStore(subscribe, readTheme, () => "default" as ThemeId);
+
+  // A choice made in another tab of this site shows up here too; and on Auto, the page follows the device when its
+  // setting changes (at sunset, say).
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === STORAGE_KEY) applyTheme(isSeason(event.newValue) ? event.newValue : "default", false);
+      if (event.key === MODE_KEY) applyMode(isFixedMode(event.newValue) ? event.newValue : "auto", false);
+    };
+    const device = window.matchMedia(DARK_DEVICE);
+    const onDevice = () => {
+      if (readModeChoice() === "auto") applyMode("auto", false);
+    };
+    window.addEventListener("storage", onStorage);
+    device.addEventListener("change", onDevice);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      device.removeEventListener("change", onDevice);
+    };
+  }, []);
+  const modeChoice = useSyncExternalStore(subscribe, readModeChoice, () => "auto" as ModeId);
+  const shownMode = useSyncExternalStore(subscribe, readShownMode, () => "light" as const);
   const current = THEMES.find((item) => item.id === theme) ?? THEMES[0];
+  const modeLabel = MODES.find((item) => item.id === modeChoice)?.label ?? "Auto";
 
   return (
     <>
@@ -82,7 +139,9 @@ export function ThemePicker({ open, onToggle, buttonRef }: ThemePickerProps) {
           const Icon = ICONS[item.id];
           return <Icon key={item.id} className={`theme-icon theme-icon-${item.id} h-5 w-5`} />;
         })}
-        <span className="sr-only">Theme: {current.label}</span>
+        <span className="sr-only">
+          Theme: {current.label}, {modeLabel}
+        </span>
       </button>
 
       <div
@@ -96,6 +155,7 @@ export function ThemePicker({ open, onToggle, buttonRef }: ThemePickerProps) {
             {THEMES.map((item) => {
               const Icon = ICONS[item.id];
               const checked = theme === item.id;
+              const [swatchAccent, swatchBackground] = item[shownMode];
               return (
                 <label
                   key={item.id}
@@ -113,8 +173,8 @@ export function ThemePicker({ open, onToggle, buttonRef }: ThemePickerProps) {
                   />
                   <span
                     aria-hidden="true"
-                    className="grid h-9 w-9 shrink-0 place-items-center rounded-full"
-                    style={{ background: item.swatch[1], color: item.swatch[0] }}
+                    className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border"
+                    style={{ background: swatchBackground, color: swatchAccent }}
                   >
                     <Icon className="h-[18px] w-[18px]" />
                   </span>
@@ -130,9 +190,37 @@ export function ThemePicker({ open, onToggle, buttonRef }: ThemePickerProps) {
               );
             })}
           </div>
-          <p className="px-2 pt-2 pb-1 text-xs text-muted">
-            Each theme has a light and a dark version; your device&apos;s setting picks one.
+        </fieldset>
+
+        <fieldset className="mt-2 border-t border-border px-2 pt-3 pb-1">
+          <legend className="sr-only">Mode</legend>
+          <p aria-hidden="true" className="text-sm font-semibold">
+            Mode
           </p>
+          <div className="mt-2 grid grid-cols-3 gap-1 rounded-xl bg-surface p-1">
+            {MODES.map((item) => {
+              const checked = modeChoice === item.id;
+              return (
+                <label
+                  key={item.id}
+                  className={`flex h-9 cursor-pointer items-center justify-center rounded-lg text-sm font-medium transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-accent ${
+                    checked ? "bg-accent text-accent-foreground shadow-sm" : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="mode"
+                    value={item.id}
+                    checked={checked}
+                    onChange={() => applyMode(item.id)}
+                    className="sr-only"
+                  />
+                  {item.label}
+                </label>
+              );
+            })}
+          </div>
+          <p className="pt-2 text-xs text-muted">Auto follows your device&apos;s light or dark setting.</p>
         </fieldset>
       </div>
     </>

@@ -11,11 +11,12 @@
 @property --accent-foreground { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
 @property --glow { syntax: "<color>"; inherits: true; initial-value: transparent; }
 
-/* Themes. Default is blue; each season has its own palette. Every theme has a light and a dark version, and the
-   visitor's device setting picks one. Every text color passes WCAG AA (4.5:1) on every background in every
-   palette, including the intro's glow and the summer sun. */
+/* Themes. Default is blue; each season has its own palette. Every theme has a light version (below) and a dark one
+   (further down), and <html data-mode> picks between them: the visitor's choice of Light or Dark, or the device's
+   setting for Auto (set before the first paint by the script in layout.tsx). Every text color passes WCAG AA
+   (4.5:1) on every background in every palette, including the intro's glow and the summer sun. */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   --background: #ffffff;
   --surface: #f8fafc; /* the band behind every other section */
   --foreground: #0f172a;
@@ -27,8 +28,23 @@
   --glow: rgb(29 78 216 / 0.12);
 }
 
+:root[data-mode="dark"] {
+  color-scheme: dark;
+  --background: #0b1120;
+  --surface: #0e1627;
+  --foreground: #e2e8f0;
+  --muted: #94a3b8;
+  --border: #1e293b;
+  --card: #111a2e;
+  --accent: #7cb4ff;
+  --accent-foreground: #0b1120;
+  --glow: rgb(124 180 255 / 0.12);
+}
+
+/* Without JavaScript the picker can't run, so the default theme follows the device, as before. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-mode]) {
+    color-scheme: dark;
     --background: #0b1120;
     --surface: #0e1627;
     --foreground: #e2e8f0;
@@ -54,19 +70,17 @@
   --sun: rgb(251 191 36 / 0.36);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root[data-theme="summer"] {
-    --background: #17110a;
-    --surface: #1e160c;
-    --foreground: #fbf1df;
-    --muted: #cdb894;
-    --border: #3b2c17;
-    --card: #261c0f;
-    --accent: #fbbf24;
-    --accent-foreground: #17110a;
-    --glow: rgb(251 191 36 / 0.12);
-    --sun: rgb(251 176 36 / 0.22);
-  }
+:root[data-mode="dark"][data-theme="summer"] {
+  --background: #17110a;
+  --surface: #1e160c;
+  --foreground: #fbf1df;
+  --muted: #cdb894;
+  --border: #3b2c17;
+  --card: #261c0f;
+  --accent: #fbbf24;
+  --accent-foreground: #17110a;
+  --glow: rgb(251 191 36 / 0.12);
+  --sun: rgb(251 176 36 / 0.22);
 }
 
 :root[data-theme="autumn"] {
@@ -85,22 +99,20 @@
   --leaf-4: #9a3412;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root[data-theme="autumn"] {
-    --background: #1a110c;
-    --surface: #21160f;
-    --foreground: #f5e7da;
-    --muted: #cfb39d;
-    --border: #3c2a1e;
-    --card: #291c13;
-    --accent: #f2995f;
-    --accent-foreground: #1a110c;
-    --glow: rgb(242 153 95 / 0.12);
-    --leaf-1: #f97316;
-    --leaf-2: #fbbf24;
-    --leaf-3: #ea580c;
-    --leaf-4: #f59e0b;
-  }
+:root[data-mode="dark"][data-theme="autumn"] {
+  --background: #1a110c;
+  --surface: #21160f;
+  --foreground: #f5e7da;
+  --muted: #cfb39d;
+  --border: #3c2a1e;
+  --card: #291c13;
+  --accent: #f2995f;
+  --accent-foreground: #1a110c;
+  --glow: rgb(242 153 95 / 0.12);
+  --leaf-1: #f97316;
+  --leaf-2: #fbbf24;
+  --leaf-3: #ea580c;
+  --leaf-4: #f59e0b;
 }
 
 :root[data-theme="winter"] {
@@ -116,19 +128,17 @@
   --fx: #8db4d6;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root[data-theme="winter"] {
-    --background: #08131e;
-    --surface: #0c1926;
-    --foreground: #e2edf7;
-    --muted: #9cb2c7;
-    --border: #1a2e42;
-    --card: #102131;
-    --accent: #7dd3fc;
-    --accent-foreground: #08131e;
-    --glow: rgb(125 211 252 / 0.12);
-    --fx: #ffffff;
-  }
+:root[data-mode="dark"][data-theme="winter"] {
+  --background: #08131e;
+  --surface: #0c1926;
+  --foreground: #e2edf7;
+  --muted: #9cb2c7;
+  --border: #1a2e42;
+  --card: #102131;
+  --accent: #7dd3fc;
+  --accent-foreground: #08131e;
+  --glow: rgb(125 211 252 / 0.12);
+  --fx: #ffffff;
 }
 
 :root[data-theme="rain"] {
@@ -144,19 +154,17 @@
   --fx: #5d8f89;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root[data-theme="rain"] {
-    --background: #091412;
-    --surface: #0d1b19;
-    --foreground: #d9ebe7;
-    --muted: #93b1ab;
-    --border: #1c3330;
-    --card: #112320;
-    --accent: #5eead4;
-    --accent-foreground: #091412;
-    --glow: rgb(94 234 212 / 0.1);
-    --fx: #9ad5cb;
-  }
+:root[data-mode="dark"][data-theme="rain"] {
+  --background: #091412;
+  --surface: #0d1b19;
+  --foreground: #d9ebe7;
+  --muted: #93b1ab;
+  --border: #1c3330;
+  --card: #112320;
+  --accent: #5eead4;
+  --accent-foreground: #091412;
+  --glow: rgb(94 234 212 / 0.1);
+  --fx: #9ad5cb;
 }
 
 @theme inline {
