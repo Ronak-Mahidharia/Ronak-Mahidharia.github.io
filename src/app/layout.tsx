@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import site from "@/content/site.json";
+import { themeScript } from "@/components/themes";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,7 +31,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    // The script below may set data-theme on <html> before React starts, so React is told to expect that.
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
+      <head>
+        {/* Applies a returning visitor's saved theme before the first paint (no flash of the default colors). */}
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-screen font-sans">{children}</body>
     </html>
   );

@@ -67,6 +67,51 @@ export function MenuIcon(props: IconProps) {
   );
 }
 
+export function ContrastIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" />
+    </Icon>
+  );
+}
+
+export function SunIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+    </Icon>
+  );
+}
+
+export function LeafIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M5 19c0-8 5-13 15-14-1 10-6 15-14 15" />
+      <path d="M5 19c3-4 6-7 10-9" />
+    </Icon>
+  );
+}
+
+export function SnowflakeIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M12 2v20M4 7l16 10M20 7 4 17" />
+      <path d="m9.5 3.5 2.5 2 2.5-2M9.5 20.5l2.5-2 2.5 2" />
+    </Icon>
+  );
+}
+
+export function CloudRainIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M7 15a4 4 0 0 1-.6-8 5.5 5.5 0 0 1 10.6 1.5A3.5 3.5 0 0 1 17 15Z" />
+      <path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3" />
+    </Icon>
+  );
+}
+
 export function CloseIcon(props: IconProps) {
   return (
     <Icon {...props}>
