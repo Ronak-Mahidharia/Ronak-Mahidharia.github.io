@@ -5,7 +5,7 @@ My personal site: experience, projects, skills, and contact links in one page. L
 Built with Next.js 16 (App Router), React 19, TypeScript, and Tailwind CSS 4. It's exported as a static site, so there's no server to run.
 
 ## Edit the content
-All text lives in [`src/content/site.json`](src/content/site.json): the intro, about, experience, projects, skills, and education. The page layout is in `src/app/page.tsx`.
+All text lives in [`src/content/site.json`](src/content/site.json): the intro, about, experience, projects, skills, and education. The page layout is in `src/app/page.tsx`. The top bar, with a link to every section (on phones, behind a Menu button), is in `src/components/SiteHeader.tsx`; a new section also needs an entry in `sections` at the top of `page.tsx`, so the bar links to it.
 
 The picture a shared link shows (on LinkedIn, Slack, and other sites) is [`src/app/opengraph-image.png`](src/app/opengraph-image.png), 1200 × 630, with its description in `opengraph-image.alt.txt`. It repeats the name, role, and intro, so update it if those change.
 

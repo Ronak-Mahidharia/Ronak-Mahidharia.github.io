@@ -1,12 +1,14 @@
 @import "tailwindcss";
 
-/* Color tokens. Light by default; dark follows the visitor's system setting. */
+/* Color tokens. Light by default; dark follows the visitor's system setting.
+   Every text color passes WCAG AA (4.5:1) on background, surface, and card in both themes. */
 :root {
   --background: #ffffff;
+  --surface: #f8fafc; /* the band behind every other section */
   --foreground: #0f172a;
   --muted: #475569;
   --border: #e2e8f0;
-  --card: #f8fafc;
+  --card: #ffffff;
   --accent: #1d4ed8;
   --accent-foreground: #ffffff;
 }
@@ -14,6 +16,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0b1120;
+    --surface: #0e1627;
     --foreground: #e2e8f0;
     --muted: #94a3b8;
     --border: #1e293b;
@@ -25,6 +28,7 @@
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
@@ -37,6 +41,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* A link to a section stops just below the sticky top bar (4rem tall), not under it. */
+  scroll-padding-top: 4rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -48,6 +54,17 @@ html {
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* A soft tint of the accent color behind the intro, strongest at the top right. */
+.hero-glow {
+  background: radial-gradient(48rem 24rem at 85% -10%, color-mix(in oklab, var(--accent) 12%, transparent), transparent 70%);
+}
+
+/* A visible ring for keyboard focus on every link and button. */
+:where(a, button):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 ::selection {
