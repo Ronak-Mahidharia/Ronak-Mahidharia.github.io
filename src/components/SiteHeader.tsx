@@ -2,22 +2,28 @@
 
 import { useEffect, useRef, useState } from "react";
 import { CloseIcon, MenuIcon } from "@/components/Icons";
+import { ThemePicker } from "@/components/ThemePicker";
 
 export type NavItem = { id: string; label: string };
 
 // How long a section chosen from a link stays marked while the page scrolls to it.
 const SCROLL_TIME = 1200;
 
-// The top bar: the name, and a link to every section. Wide screens show the links in the bar; phones get a Menu
-// button that opens the same links. The section on screen is marked, so a visitor always knows where they are.
+type Panel = "menu" | "theme" | null;
+
+// The top bar: the name, a link to every section, and the theme picker. Wide screens show the links in the bar;
+// phones get a Menu button that opens the same links. The section on screen is marked, so a visitor always knows
+// where they are. One panel is open at a time.
 export function SiteHeader({ name, items }: { name: string; items: NavItem[] }) {
-  const [open, setOpen] = useState(false);
+  const [panel, setPanel] = useState<Panel>(null);
   const [active, setActive] = useState("");
   const headerRef = useRef<HTMLElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const themeButtonRef = useRef<HTMLButtonElement>(null);
   const chosen = useRef<{ id: string; until: number } | null>(null);
   const initials = name.split(" ").map((word) => word[0]).join("");
+  const menuOpen = panel === "menu";
 
   // The marked section: the one chosen from a link, while its heading is still near the top (a short last section
   // can't scroll all the way up); otherwise the last section whose top has passed just under the bar, or the last
@@ -67,17 +73,17 @@ export function SiteHeader({ name, items }: { name: string; items: NavItem[] }) 
     };
   }, [items]);
 
-  // The open menu closes with Escape (focus goes back to its button) or a tap outside the bar.
+  // An open panel closes with Escape (focus goes back to the button that opened it) or a tap outside the bar.
   useEffect(() => {
-    if (!open) return;
+    if (!panel) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        setOpen(false);
-        buttonRef.current?.focus();
+        setPanel(null);
+        (panel === "menu" ? menuButtonRef : themeButtonRef).current?.focus();
       }
     };
     const onPointer = (event: PointerEvent) => {
-      if (!headerRef.current?.contains(event.target as Node)) setOpen(false);
+      if (!headerRef.current?.contains(event.target as Node)) setPanel(null);
     };
     document.addEventListener("keydown", onKey);
     document.addEventListener("pointerdown", onPointer);
@@ -85,13 +91,13 @@ export function SiteHeader({ name, items }: { name: string; items: NavItem[] }) 
       document.removeEventListener("keydown", onKey);
       document.removeEventListener("pointerdown", onPointer);
     };
-  }, [open]);
+  }, [panel]);
 
-  // Turning a phone sideways (or widening a window) past the menu's breakpoint closes the menu.
+  // Turning a phone sideways (or widening a window) past the menu's breakpoint closes the phone menu.
   useEffect(() => {
     const wide = window.matchMedia("(min-width: 768px)");
     const onChange = () => {
-      if (wide.matches) setOpen(false);
+      if (wide.matches) setPanel((open) => (open === "menu" ? null : open));
     };
     wide.addEventListener("change", onChange);
     return () => wide.removeEventListener("change", onChange);
@@ -101,16 +107,14 @@ export function SiteHeader({ name, items }: { name: string; items: NavItem[] }) 
   const choose = (id: string, at: number) => {
     chosen.current = { id, until: at + SCROLL_TIME };
     setActive(id);
-    setOpen(false);
+    setPanel(null);
   };
+  const toggle = (which: Exclude<Panel, null>) => setPanel((open) => (open === which ? null : which));
 
   return (
-    <header
-      ref={headerRef}
-      className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md"
-    >
-      <div ref={barRef} className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-5 sm:px-6">
-        <a href="#top" onClick={() => setOpen(false)} className="flex items-center gap-3 rounded-lg font-semibold tracking-tight">
+    <header ref={headerRef} className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
+      <div ref={barRef} className="relative mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-5 sm:px-6">
+        <a href="#top" onClick={() => setPanel(null)} className="flex items-center gap-3 rounded-lg font-semibold tracking-tight">
           <span
             aria-hidden="true"
             className="grid h-9 w-9 place-items-center rounded-lg bg-accent text-sm font-bold text-accent-foreground"
@@ -120,53 +124,57 @@ export function SiteHeader({ name, items }: { name: string; items: NavItem[] }) 
           <span>{name}</span>
         </a>
 
-        <nav aria-label="Sections" className="hidden md:block">
-          <ul className="flex items-center gap-1 text-sm">
-            {items.map((item) => {
-              const current = active === item.id;
-              return (
-                <li key={item.id}>
-                  <a
-                    href={`#${item.id}`}
-                    aria-current={current ? "true" : undefined}
-                    onClick={(event) => choose(item.id, event.timeStamp)}
-                    className={`relative block rounded-md px-3 py-2 transition-colors hover:text-foreground ${
-                      current ? "font-medium text-foreground" : "text-muted"
-                    }`}
-                  >
-                    {item.label}
-                    <span
-                      aria-hidden="true"
-                      className={`absolute inset-x-3 -bottom-[13px] h-0.5 rounded-full bg-accent transition-opacity ${
-                        current ? "opacity-100" : "opacity-0"
+        <div className="flex items-center gap-1">
+          <nav aria-label="Sections" className="hidden md:block">
+            <ul className="flex items-center gap-1 text-sm">
+              {items.map((item) => {
+                const current = active === item.id;
+                return (
+                  <li key={item.id}>
+                    <a
+                      href={`#${item.id}`}
+                      aria-current={current ? "true" : undefined}
+                      onClick={(event) => choose(item.id, event.timeStamp)}
+                      className={`relative block rounded-md px-3 py-2 transition-colors hover:text-foreground ${
+                        current ? "font-medium text-foreground" : "text-muted"
                       }`}
-                    />
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+                    >
+                      {item.label}
+                      <span
+                        aria-hidden="true"
+                        className={`absolute inset-x-3 -bottom-[13px] h-0.5 rounded-full bg-accent transition-opacity ${
+                          current ? "opacity-100" : "opacity-0"
+                        }`}
+                      />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
 
-        <button
-          ref={buttonRef}
-          type="button"
-          aria-expanded={open}
-          aria-controls="section-menu"
-          onClick={() => setOpen((value) => !value)}
-          className="-mr-2 flex h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium md:hidden"
-        >
-          {open ? <CloseIcon className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
-          {open ? "Close" : "Menu"}
-        </button>
+          <ThemePicker open={panel === "theme"} onToggle={() => toggle("theme")} buttonRef={themeButtonRef} />
+
+          <button
+            ref={menuButtonRef}
+            type="button"
+            aria-expanded={menuOpen}
+            aria-controls="section-menu"
+            onClick={() => toggle("menu")}
+            className="-mr-2 flex h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium md:hidden"
+          >
+            {menuOpen ? <CloseIcon className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
+            {menuOpen ? "Close" : "Menu"}
+          </button>
+        </div>
       </div>
 
       {/* Opens over the page (below the bar), so nothing on the page moves. */}
       <nav
         id="section-menu"
         aria-label="Sections"
-        hidden={!open}
-        className="absolute inset-x-0 top-full border-y border-border bg-background shadow-lg md:hidden"
+        data-open={menuOpen}
+        className="panel absolute inset-x-0 top-full border-y border-border bg-background shadow-lg md:hidden"
       >
         <ul className="mx-auto max-w-5xl px-3 py-2">
           {items.map((item) => {

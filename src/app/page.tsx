@@ -3,6 +3,7 @@ import { Section } from "@/components/Section";
 import { ExternalLink } from "@/components/ExternalLink";
 import { Tags } from "@/components/Tags";
 import { SiteHeader, type NavItem } from "@/components/SiteHeader";
+import { SeasonEffects } from "@/components/SeasonEffects";
 import { ArrowUp, ArrowUpRight, Mail, MapPin } from "@/components/Icons";
 
 // The top bar links to every section, in page order (on phones, through its menu).
@@ -71,6 +72,7 @@ export default function Home() {
         {/* Intro */}
         <section id="top" aria-label="Introduction" className="relative isolate overflow-hidden">
           <div aria-hidden="true" className="hero-glow absolute inset-0 -z-10" />
+          <SeasonEffects />
           <div className="mx-auto grid max-w-5xl gap-12 px-5 py-16 sm:px-6 sm:py-24 md:grid-cols-[minmax(0,1fr)_17rem] md:items-center lg:grid-cols-[minmax(0,1fr)_19rem]">
             <div>
               <p className="inline-flex rounded-full border border-border bg-background px-3 py-1 text-sm font-medium text-accent">
