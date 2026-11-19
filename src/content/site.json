@@ -17,9 +17,8 @@
     {
       "role": "Software Engineer I",
       "company": "TermScout",
-      "companyNote": "AI contract-intelligence platform",
       "dates": "May 2026 – Present",
-      "location": "Remote",
+      "location": "Centennial, CO · Remote",
       "bullets": [
         "Built a no-login contract analysis funnel in React and Python on AWS Lambda. It runs the core AI pipeline in its own isolated AWS account, returns results that match the main product field for field in about 3 to 4 minutes, and keeps the cost per analysis low.",
         "Diagnosed a broken contract signal and led the correction across 6 agreement types (about 2,650 clause positions). I wrote a transactional loader with automatic backups, dry-run diffs, and one-step rollback, so every change could be checked before it went live and undone in one step.",
